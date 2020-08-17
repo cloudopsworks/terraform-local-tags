@@ -8,4 +8,4 @@
 # .tfvars files
 *.tfvars
 .build-harness
-build-harness/
+**/build-harness/*
