@@ -1,4 +1,5 @@
 output "locals" {
+  description = "All local scoped varialbes set"
   value = {
     name_tag           = local.name_tag
     object_name_tag    = local.object_name_tag
