@@ -1,16 +1,29 @@
 locals {
-  name_tag        = join(" ", compact([var.env.organization_name, var.env.org_unit_name, var.env.environment_name, var.env.environment_type]))
-  object_name_tag = join("", compact([var.env.organization_name, var.env.org_unit_name, var.env.environment_name, var.env.environment_type]))
+  env_defaults = {
+    organization_name = ""
+    org_unit_name     = ""
+    environment_name  = ""
+    environment_type  = ""
+  }
 
-  organization_name = join("-", compact([var.env.organization_name, var.env.org_unit_name]))
-  environment_name  = join("-", compact([var.env.organization_name, var.env.org_unit_name, var.env.environment_name, var.env.environment_type]))
+  organization_name_val = lookup(var.env, "organization_name", local.env_defaults.organization_name)
+  org_unit_name_val     = lookup(var.env, "org_unit_name", local.env_defaults.org_unit_name)
+  environment_name_val  = lookup(var.env, "environment_name", local.env_defaults.environment_name)
+  environment_type_val  = lookup(var.env, "environment_type", local.env_defaults.environment_type)
+
+
+  name_tag        = join(" ", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
+  object_name_tag = join("", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
+
+  organization_name = join("-", compact([local.organization_name_val, local.org_unit_name_val]))
+  environment_name  = join("-", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
 
   common_tags = {
-    organization-full-name = join(" ", compact([var.env.organization_name, var.env.org_unit_name, var.env.environment_name, var.env.environment_type]))
-    organization           = var.env.organization_name
-    organization-unit      = var.env.org_unit_name
-    application-name       = var.env.environment_name
-    application-type       = var.env.environment_type
+    organization-full-name = join(" ", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
+    organization           = local.organization_name_val != "" ? local.organization_name_val : "NIL"
+    organization-unit      = local.org_unit_name_val != "" ? local.org_unit_name_val : "NIL"
+    application-name       = local.environment_name_val != "" ? local.environment_name_val : "NIL"
+    application-type       = local.environment_type_val != "" ? local.environment_type_val : "NIL"
   }
 
   common_tags_string = join(",", [for k, v in local.common_tags : format("%s=%s", k, v)])
