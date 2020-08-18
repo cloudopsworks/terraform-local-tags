@@ -9,3 +9,4 @@
 *.tfvars
 .build-harness
 **/build-harness/*
+build-harness
