@@ -9,6 +9,8 @@ output "locals" {
     organization_name_lc = lower(local.organization_name)
     environment_name     = local.environment_name
     environment_name_lc  = lower(local.environment_name)
+    environment_name_20  = lower(local.organization_name_20)
+    environment_name_32  = lower(local.organization_name_32)
     common_tags          = local.common_tags
     common_tags_string   = local.common_tags_string
   }
