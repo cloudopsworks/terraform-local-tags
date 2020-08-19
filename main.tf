@@ -31,9 +31,9 @@ locals {
     application-type       = local.environment_type_val != "" ? local.environment_type_val : "NIL"
   }
 
-  common_tags_k8s = { for k,v in local.common_tags:
-    k => replace(v," ", "-") if v != "NIL"
+  common_tags_k8s = { for k, v in local.common_tags :
+    k => replace(v, " ", "-") if v != "NIL"
   }
 
-  common_tags_string = join(",", [for k, v in local.common_tags : format("%s=%s", k, v)])
+  common_tags_string = join(",", [for k, v in local.common_tags_k8s : format("%s=%s", k, v)])
 }

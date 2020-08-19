@@ -18,3 +18,13 @@ output "locals" {
     common_tags_k8s      = local.common_tags_k8s
   }
 }
+
+output "env" {
+  description = "Environment variables with default"
+  value = {
+    organization_name = local.organization_name_val
+    org_unit_name     = local.org_unit_name_val
+    environment_name  = local.environment_name_val
+    environment_type  = local.environment_type_val
+  }
+}
