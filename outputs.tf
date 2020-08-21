@@ -3,8 +3,9 @@ output "locals" {
   value = {
     name_tag              = local.name_tag
     name_tag_lc           = lower(local.name_tag)
-    object_name_tag       = local.object_name_tag
-    object_name_tagi_lc   = lower(local.object_name_tag)
+    object_name_tag       = local.object_name_tag    # Allways lowercase
+    object_name_tag_20    = local.object_name_tag_20 # Allways lowercase
+    object_name_tag_32    = local.object_name_tag_32 # Allways lowercase
     organization_name     = local.organization_name
     organization_name_lc  = lower(local.organization_name)
     environment_name      = local.environment_name

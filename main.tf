@@ -13,7 +13,7 @@ locals {
 
 
   name_tag        = join(" ", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
-  object_name_tag = join("", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
+  object_name_tag = lower(join("", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val])))
 
   organization_name = join("-", compact([local.organization_name_val, local.org_unit_name_val]))
   environment_name  = join("-", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
@@ -22,6 +22,8 @@ locals {
   organization_name_32 = substr(local.organization_name, 0, 31 <= length(local.organization_name) ? 31 : length(local.organization_name))
   environment_name_20  = substr(local.environment_name, 0, 19 <= length(local.environment_name) ? 19 : length(local.environment_name))
   environment_name_32  = substr(local.environment_name, 0, 31 <= length(local.environment_name) ? 31 : length(local.environment_name))
+  object_name_tag_20   = substr(local.object_name_tag, 0, 19 <= length(local.object_name_tag) ? 19 : length(local.object_name_tag))
+  object_name_tag_32   = substr(local.object_name_tag, 0, 31 <= length(local.object_name_tag) ? 31 : length(local.object_name_tag))
 
   common_tags = {
     organization-full-name = join(" ", compact([local.organization_name_val, local.org_unit_name_val, local.environment_name_val, local.environment_type_val]))
