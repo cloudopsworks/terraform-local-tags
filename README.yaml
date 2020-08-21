@@ -1,0 +1,37 @@
+name: Terraform Local Tags
+
+#logo: logo/logo.jpg
+
+license: "APACHE2"
+
+copyrights:
+  - name: "eLasticGuru OÜ"
+    url: "https://e.lastic.guru"
+    year: "2020"
+
+github_repo: elasticguru/terraform-local-tags
+
+
+description: |-
+  Terraform Local tags building block for reuse on multiple projects.
+
+# Introduction to the project
+#introduction: |-
+#  This is an introduction.
+
+# How to use this project
+#usage: |-
+
+# Example usage
+#examples: |-
+
+# How to get started quickly
+#quickstart: |-
+
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"
+
+contributors:
+  - name: "Cristian Beraha"
+    github: "berahac"

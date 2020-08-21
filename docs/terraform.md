@@ -8,5 +8,6 @@
 
 | Name | Description |
 |------|-------------|
+| env | Environment variables with default |
 | locals | All local scoped varialbes set |
 
