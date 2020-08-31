@@ -37,6 +37,8 @@ locals {
     k => replace(v, " ", "-") if v != "NIL"
   }
 
+  common_tags_json = format("{%s}", join(",", [for k, v in local.common_tags_k8s : format("\"%s\": \"%s\"", k, v)]))
+
   common_tags_string    = join(",", [for k, v in local.common_tags_k8s : format("%s=%s", k, v)])
   common_tags_string_lc = lower(local.common_tags_string)
 }

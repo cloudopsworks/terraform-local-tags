@@ -15,6 +15,7 @@ output "locals" {
     organization_name_20  = lower(local.organization_name_20)
     organization_name_32  = lower(local.organization_name_32)
     common_tags           = local.common_tags
+    common_tags_json      = local.common_tags_json
     common_tags_string    = local.common_tags_string
     common_tags_string_lc = local.common_tags_string_lc
     common_tags_k8s       = local.common_tags_k8s
