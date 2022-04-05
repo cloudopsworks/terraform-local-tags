@@ -5,11 +5,11 @@ name: Terraform Local Tags
 license: "APACHE2"
 
 copyrights:
-  - name: "eLasticGuru OÜ"
-    url: "https://e.lastic.guru"
-    year: "2020"
+  - name: "Cloud Ops Works LLC"
+    url: "https://cloudops.works"
+    year: "2021"
 
-github_repo: elasticguru/terraform-local-tags
+github_repo: cloudopsworks/terraform-local-tags
 
 
 description: |-

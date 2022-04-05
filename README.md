@@ -8,7 +8,7 @@
   -->
 [![README Header][readme_header_img]][readme_header_link]
 
-[![eLasticGuru][logo]](https://e.lastic.guru/)
+[![cloudopsworks][logo]](https://cloudops.works/)
 
 # Terraform Local Tags
 
@@ -18,16 +18,16 @@ Terraform Local tags building block for reuse on multiple projects.
 
 ---
 
-This project is part of our comprehensive ["SweetOps"](https://cowk.io/sweetops) approach towards DevOps. 
-[<img align="right" title="Share via Email" src="https://docs.e.lastic.guru/images/ionicons/ios-email-outline-2.0.1-16x16-999999.svg"/>][share_email]
-[<img align="right" title="Share on Google+" src="https://docs.e.lastic.guru/images/ionicons/social-googleplus-outline-2.0.1-16x16-999999.svg" />][share_googleplus]
-[<img align="right" title="Share on Facebook" src="https://docs.e.lastic.guru/images/ionicons/social-facebook-outline-2.0.1-16x16-999999.svg" />][share_facebook]
-[<img align="right" title="Share on Reddit" src="https://docs.e.lastic.guru/images/ionicons/social-reddit-outline-2.0.1-16x16-999999.svg" />][share_reddit]
-[<img align="right" title="Share on LinkedIn" src="https://docs.e.lastic.guru/images/ionicons/social-linkedin-outline-2.0.1-16x16-999999.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" src="https://docs.e.lastic.guru/images/ionicons/social-twitter-outline-2.0.1-16x16-999999.svg" />][share_twitter]
+This project is part of our comprehensive approach towards DevOps Acceleration. 
+[<img align="right" title="Share via Email" src="https://docs.cloudops.works/images/ionicons/ios-email-outline-2.0.1-16x16-999999.svg"/>][share_email]
+[<img align="right" title="Share on Google+" src="https://docs.cloudops.works/images/ionicons/social-googleplus-outline-2.0.1-16x16-999999.svg" />][share_googleplus]
+[<img align="right" title="Share on Facebook" src="https://docs.cloudops.works/images/ionicons/social-facebook-outline-2.0.1-16x16-999999.svg" />][share_facebook]
+[<img align="right" title="Share on Reddit" src="https://docs.cloudops.works/images/ionicons/social-reddit-outline-2.0.1-16x16-999999.svg" />][share_reddit]
+[<img align="right" title="Share on LinkedIn" src="https://docs.cloudops.works/images/ionicons/social-linkedin-outline-2.0.1-16x16-999999.svg" />][share_linkedin]
+[<img align="right" title="Share on Twitter" src="https://docs.cloudops.works/images/ionicons/social-twitter-outline-2.0.1-16x16-999999.svg" />][share_twitter]
 
 
-[![Terraform Open Source Modules](https://docs.e.lastic.guru/images/terraform-open-source-modules.svg)][terraform_modules]
+[![Terraform Open Source Modules](https://docs.cloudops.works/images/terraform-open-source-modules.svg)][terraform_modules]
 
 
 
@@ -83,7 +83,7 @@ Available targets:
 
 **Got a question?** We got answers. 
 
-File a GitHub [issue](https://github.com/elasticguru/terraform-local-tags/issues), send us an [email][email] or join our [Slack Community][slack].
+File a GitHub [issue](https://github.com/cloudopsworks/terraform-local-tags/issues), send us an [email][email] or join our [Slack Community][slack].
 
 [![README Commercial Support][readme_commercial_support_img]][readme_commercial_support_link]
 
@@ -100,7 +100,7 @@ File a GitHub [issue](https://github.com/elasticguru/terraform-local-tags/issues
 
 ### Bug Reports & Feature Requests
 
-Please use the [issue tracker](https://github.com/elasticguru/terraform-local-tags/issues) to report any bugs or file feature requests.
+Please use the [issue tracker](https://github.com/cloudopsworks/terraform-local-tags/issues) to report any bugs or file feature requests.
 
 ### Developing
 
@@ -109,7 +109,7 @@ Please use the [issue tracker](https://github.com/elasticguru/terraform-local-ta
 
 ## Copyrights
 
-Copyright © 2020-2020 [eLasticGuru OÜ](https://e.lastic.guru)
+Copyright © 2021-2022 [Cloud Ops Works LLC](https://cloudops.works)
 
 
 
@@ -152,7 +152,7 @@ All other trademarks referenced herein are the property of their respective owne
 
 ## About
 
-This project is maintained by [eLasticGuru OÜ][website]. 
+This project is maintained by [Cloud Ops Works LLC][website]. 
 
 
 ### Contributors
@@ -161,37 +161,37 @@ This project is maintained by [eLasticGuru OÜ][website].
 |---|
 
   [berahac_homepage]: https://github.com/berahac
-  [berahac_avatar]: https://img.e.lastic.guru/150x150/https://github.com/berahac.png
+  [berahac_avatar]: https://img.cloudops.works/150x150/https://github.com/berahac.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
 
-  [logo]: https://e.lastic.guru/logo-300x69.svg
-  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=docs
-  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=website
-  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=github
-  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=jobs
-  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=hire
-  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=slack
-  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=linkedin
-  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=twitter
-  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=testimonial
-  [office_hours]: https://e.lastic.guru/office-hours?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=office_hours
-  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=newsletter
-  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=email
-  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=commercial_support
-  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=we_love_open_source
-  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=terraform_modules
-  [readme_header_img]: https://e.lastic.guru/readme/header/img
-  [readme_header_link]: https://e.lastic.guru/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=readme_header_link
-  [readme_footer_img]: https://e.lastic.guru/readme/footer/img
-  [readme_footer_link]: https://e.lastic.guru/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=readme_footer_link
-  [readme_commercial_support_img]: https://e.lastic.guru/readme/commercial-support/img
-  [readme_commercial_support_link]: https://e.lastic.guru/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=elasticguru/terraform-local-tags&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=Terraform+Local+Tags&url=https://github.com/elasticguru/terraform-local-tags
-  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Local+Tags&url=https://github.com/elasticguru/terraform-local-tags
-  [share_reddit]: https://reddit.com/submit/?url=https://github.com/elasticguru/terraform-local-tags
-  [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/elasticguru/terraform-local-tags
-  [share_googleplus]: https://plus.google.com/share?url=https://github.com/elasticguru/terraform-local-tags
-  [share_email]: mailto:?subject=Terraform+Local+Tags&body=https://github.com/elasticguru/terraform-local-tags
-  [beacon]: https://ga-beacon.e.lastic.guru/UA-76589703-4/elasticguru/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
+  [logo]: https://cloudops.works/logo-300x69.svg
+  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=docs
+  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=website
+  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=github
+  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=jobs
+  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=hire
+  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=slack
+  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=linkedin
+  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=twitter
+  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=testimonial
+  [office_hours]: https://cloudops.works/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=office_hours
+  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=newsletter
+  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=email
+  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=commercial_support
+  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=we_love_open_source
+  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=terraform_modules
+  [readme_header_img]: https://cloudops.works/readme/header/img
+  [readme_header_link]: https://cloudops.works/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_header_link
+  [readme_footer_img]: https://cloudops.works/readme/footer/img
+  [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_footer_link
+  [readme_commercial_support_img]: https://cloudops.works/readme/commercial-support/img
+  [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_commercial_support_link
+  [share_twitter]: https://twitter.com/intent/tweet/?text=Terraform+Local+Tags&url=https://github.com/cloudopsworks/terraform-local-tags
+  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Local+Tags&url=https://github.com/cloudopsworks/terraform-local-tags
+  [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/terraform-local-tags
+  [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/terraform-local-tags
+  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/terraform-local-tags
+  [share_email]: mailto:?subject=Terraform+Local+Tags&body=https://github.com/cloudopsworks/terraform-local-tags
+  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
