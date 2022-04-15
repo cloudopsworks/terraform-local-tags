@@ -19,12 +19,12 @@ Terraform Local tags building block for reuse on multiple projects.
 ---
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
-[<img align="right" title="Share via Email" src="https://docs.cloudops.works/images/ionicons/ios-email-outline-2.0.1-16x16-999999.svg"/>][share_email]
-[<img align="right" title="Share on Google+" src="https://docs.cloudops.works/images/ionicons/social-googleplus-outline-2.0.1-16x16-999999.svg" />][share_googleplus]
-[<img align="right" title="Share on Facebook" src="https://docs.cloudops.works/images/ionicons/social-facebook-outline-2.0.1-16x16-999999.svg" />][share_facebook]
-[<img align="right" title="Share on Reddit" src="https://docs.cloudops.works/images/ionicons/social-reddit-outline-2.0.1-16x16-999999.svg" />][share_reddit]
-[<img align="right" title="Share on LinkedIn" src="https://docs.cloudops.works/images/ionicons/social-linkedin-outline-2.0.1-16x16-999999.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" src="https://docs.cloudops.works/images/ionicons/social-twitter-outline-2.0.1-16x16-999999.svg" />][share_twitter]
+[<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
+[<img align="right" title="Share on Google+" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
+[<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
+[<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
+[<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
+[<img align="right" title="Share on Twitter" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
 
 
 [![Terraform Open Source Modules](https://docs.cloudops.works/images/terraform-open-source-modules.svg)][terraform_modules]
@@ -63,19 +63,36 @@ Available targets:
   lint:                              Lint terraform code
 
 ```
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| env | Environment definition object | any | `<map>` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_env"></a> [env](#input\_env) | Environment definition object | `any` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| env | Environment variables with default |
-| locals | All local scoped varialbes set |
-
+| <a name="output_env"></a> [env](#output\_env) | Environment variables with default |
+| <a name="output_locals"></a> [locals](#output\_locals) | All local scoped varialbes set |
 
 
 
@@ -161,7 +178,7 @@ This project is maintained by [Cloud Ops Works LLC][website].
 |---|
 
   [berahac_homepage]: https://github.com/berahac
-  [berahac_avatar]: https://img.cloudops.works/150x150/https://github.com/berahac.png
+  [berahac_avatar]: https://github.com/berahac.png?size=50
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
@@ -194,4 +211,4 @@ This project is maintained by [Cloud Ops Works LLC][website].
   [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/terraform-local-tags
   [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/terraform-local-tags
   [share_email]: mailto:?subject=Terraform+Local+Tags&body=https://github.com/cloudopsworks/terraform-local-tags
-  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
+  [beacon]: https://ga-beacon.cloudops.works/G-7XWMFVFXZT/cloudopsworks/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
