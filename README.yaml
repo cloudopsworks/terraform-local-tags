@@ -1,12 +1,19 @@
 name: Terraform Local Tags
 
 #logo: logo/logo.jpg
+badges:
+  - name: Latest Release
+    image: https://img.shields.io/github/release/<owner/repo>.svg?style=for-the-badge
+    url: https://github.com/<owner/repo>/releases/latest
+  - name: Last Updated
+    image: https://img.shields.io/github/last-commit/<owner/repo>.svg?style=for-the-badge
+    url: https://github.com/<owner/repo>/commits
 
 license: "APACHE2"
 
 copyrights:
   - name: "Cloud Ops Works LLC"
-    url: "https://cloudops.works"
+    url: "https://cloudopsworks.co"
     year: "2021"
 
 github_repo: cloudopsworks/terraform-local-tags
@@ -16,17 +23,17 @@ description: |-
   Terraform Local tags building block for reuse on multiple projects.
 
 # Introduction to the project
-#introduction: |-
+introduction: |-
 #  This is an introduction.
 
 # How to use this project
-#usage: |-
+usage: |-
 
 # Example usage
-#examples: |-
+examples: |-
 
 # How to get started quickly
-#quickstart: |-
+quickstart: |-
 
 include:
   - "docs/targets.md"
