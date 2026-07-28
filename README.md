@@ -8,27 +8,28 @@
   -->
 [![README Header][readme_header_img]][readme_header_link]
 
-[![cloudopsworks][logo]](https://cloudops.works/)
+[![cloudopsworks][logo]](https://cloudopsworks.co/)
 
-# Terraform Local Tags
+# Terraform Local Tags [![Latest Release](https://img.shields.io/github/release/cloudopsworks/terraform-local-tags.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-local-tags/releases/latest) [![Last Updated](https://img.shields.io/github/last-commit/cloudopsworks/terraform-local-tags.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-local-tags/commits)
 
 
 Terraform Local tags building block for reuse on multiple projects.
+
+Takes a single loosely typed `env` object describing the organization and the environment,
+and derives from it a consistent set of naming strings and resource tags. It creates no
+resources, requires no provider and declares no backend — it is a pure computation module
+meant to be embedded in every other Cloud Ops Works Terraform module so that names and tags
+stay identical across clouds, accounts and stacks.
 
 
 ---
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
-[<img align="right" title="Share via Email" src="https://docs.cloudops.works/images/ionicons/ios-email-outline-2.0.1-16x16-999999.svg"/>][share_email]
-[<img align="right" title="Share on Google+" src="https://docs.cloudops.works/images/ionicons/social-googleplus-outline-2.0.1-16x16-999999.svg" />][share_googleplus]
-[<img align="right" title="Share on Facebook" src="https://docs.cloudops.works/images/ionicons/social-facebook-outline-2.0.1-16x16-999999.svg" />][share_facebook]
-[<img align="right" title="Share on Reddit" src="https://docs.cloudops.works/images/ionicons/social-reddit-outline-2.0.1-16x16-999999.svg" />][share_reddit]
-[<img align="right" title="Share on LinkedIn" src="https://docs.cloudops.works/images/ionicons/social-linkedin-outline-2.0.1-16x16-999999.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" src="https://docs.cloudops.works/images/ionicons/social-twitter-outline-2.0.1-16x16-999999.svg" />][share_twitter]
-
-
-[![Terraform Open Source Modules](https://docs.cloudops.works/images/terraform-open-source-modules.svg)][terraform_modules]
-
+[<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
+[<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
+[<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
+[<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
+[<img align="right" title="Share on X" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
 
 
 It's 100% Open Source and licensed under the [APACHE2](LICENSE).
@@ -39,17 +40,322 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 
 
-We literally have [*hundreds of terraform modules*][terraform_modules] that are Open Source and well-maintained. Check them out! 
+We have [*lots of terraform modules*][terraform_modules] that are Open Source and we are trying to get them well-maintained!. Check them out!
 
 
 
 
 
 
+## Introduction
+
+Resource naming and tagging drift is the most common source of inconsistency across an
+infrastructure estate: one module lowercases, another does not; one truncates at 20
+characters for an ELB name, another at 32 for an S3 bucket; one emits `Environment`, another
+emits `application-name`. This module removes that decision from every consuming module by
+computing all of the variants once, from one input.
+
+### Input
+
+A single `env` object with four optional keys:
+
+| Key                 | Description                          | Default |
+|---------------------|--------------------------------------|---------|
+| `organization_name` | Organization name                    | `""`    |
+| `org_unit_name`     | Organizational unit name             | `""`    |
+| `environment_name`  | Application / environment name       | `""`    |
+| `environment_type`  | Environment type                     | `""`    |
+
+Keys left unset resolve to an empty string and are dropped from every generated name, so
+partial configurations degrade cleanly instead of producing dangling separators.
+
+### Naming outputs
+
+All naming values are exposed under the `locals` output.
+
+| Output key             | Composition                                                             | Case      |
+|------------------------|-------------------------------------------------------------------------|-----------|
+| `name_tag`             | organization, unit, environment name and type joined by spaces          | as given  |
+| `name_tag_lc`          | same as `name_tag`                                                       | lowercase |
+| `object_name_tag`      | same parts concatenated with no separator                                | lowercase |
+| `object_name_tag_20`   | `object_name_tag` truncated to 20 characters                             | lowercase |
+| `object_name_tag_32`   | `object_name_tag` truncated to 32 characters                             | lowercase |
+| `organization_name`    | organization and unit joined by `-`                                      | as given  |
+| `organization_name_lc` | same as `organization_name`                                              | lowercase |
+| `organization_name_20` | `organization_name` truncated to 20 characters                           | lowercase |
+| `organization_name_32` | `organization_name` truncated to 32 characters                           | lowercase |
+| `environment_name`     | organization, unit, environment name and type joined by `-`              | as given  |
+| `environment_name_lc`  | same as `environment_name`                                               | lowercase |
+| `environment_name_20`  | `environment_name` truncated to 20 characters                            | lowercase |
+| `environment_name_32`  | `environment_name` truncated to 32 characters                            | lowercase |
+
+The truncated variants exist for providers that enforce short identifiers — AWS load
+balancer names, storage account names, Kubernetes labels — so the consuming module never has
+to re-implement the `substr` logic.
+
+### Tag outputs
+
+| Output key              | Type     | Description                                                                            |
+|-------------------------|----------|----------------------------------------------------------------------------------------|
+| `common_tags`           | `map`    | Canonical tag map. Keys with no value are emitted as the literal `NIL`.                  |
+| `common_tags_k8s`       | `map`    | `common_tags` with spaces replaced by `-` and `NIL` entries removed — safe as label values. |
+| `common_tags_json`      | `string` | `common_tags_k8s` rendered as a JSON object string.                                      |
+| `common_tags_string`    | `string` | `common_tags_k8s` rendered as comma separated `key=value` pairs.                          |
+| `common_tags_string_lc` | `string` | `common_tags_string`, lowercased.                                                        |
+
+The tag keys produced in `common_tags` are `organization-full-name`, `organization`,
+`organization-unit`, `application-name` and `application-type`.
+
+The `common_tags` map keeps `NIL` placeholders so that a tag key is never silently missing on
+a cloud resource, while `common_tags_k8s` drops them because Kubernetes label values must be
+meaningful. The `_json` and `_string` renderings exist for the many places that accept tags
+only as an opaque string — Helm values, Kubernetes annotations, provider arguments typed as
+`string`, or CI variables.
+
+### Second output: `env`
+
+The `env` output echoes the four input keys after default resolution. It lets a consuming
+module read the effective configuration without re-implementing the `lookup` and default
+chain.
+
+## Usage
 
 
+**IMPORTANT:** The `master` branch is used in `source` just as an example. In your code, do not pin to `master` because there may be breaking changes between releases.
+Instead pin to the release tag (e.g. `?ref=vX.Y.Z`) of one of our [latest releases](https://github.com/cloudopsworks/terraform-local-tags/releases).
 
 
+This module produces no resources and has no provider requirements, so it is consumed as a
+nested module rather than deployed on its own. Add it to the module that needs the names and
+tags, then read the values from its `locals` output.
+
+### Add the module as a git submodule
+
+Cloud Ops Works modules track their building blocks as git submodules pinned to a released
+tag:
+
+```sh
+git submodule add https://github.com/cloudopsworks/terraform-local-tags.git modules/tags
+cd modules/tags && git checkout v1.0 && cd -
+git add .gitmodules modules/tags
+```
+
+Then reference it by local path:
+
+```hcl
+module "tags" {
+  source = "./modules/tags"
+
+  env = {
+    organization_name = var.org.organization_name
+    org_unit_name     = var.org.organization_unit
+    environment_name  = var.org.environment_name
+    environment_type  = var.org.environment_type
+  }
+}
+```
+
+### Or reference the repository directly
+
+```hcl
+module "tags" {
+  source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+  env = {
+    organization_name = var.org.organization_name
+    org_unit_name     = var.org.organization_unit
+    environment_name  = var.org.environment_name
+    environment_type  = var.org.environment_type
+  }
+}
+```
+
+The `v1.0` ref is a moving major.minor tag maintained by the release pipeline; pin to a full
+`vX.Y.Z` tag when you need a fully reproducible checkout.
+
+### Consume the outputs
+
+```hcl
+locals {
+  all_tags    = merge(module.tags.locals.common_tags, var.extra_tags)
+  system_name = module.tags.locals.environment_name
+  bucket_name = module.tags.locals.object_name_tag_32
+}
+```
+
+### Terragrunt-driven root modules
+
+The module is never scaffolded into a Terragrunt unit directly. In a Cloud Ops Works stack the
+operator supplies the organization block once in `env-inputs.yaml`, Terragrunt maps it to the
+root module `org` variable, and the root module forwards it to `module.tags`:
+
+```yaml
+# env-inputs.yaml — supplied once per environment, inherited by every unit
+org:
+  organization_name: "acme"      # (Required) Organization name
+  organization_unit: "devops"    # (Required) Organizational unit name
+  environment_name: "prod"       # (Required) Application / environment name
+  environment_type: "production" # (Required) Environment type
+```
+
+```hcl
+# terragrunt.hcl — generated by terragrunt scaffold for the consuming module
+locals {
+  env_vars = yamldecode(file(find_in_parent_folders("env-inputs.yaml")))
+}
+
+inputs = {
+  org = local.env_vars.org
+}
+```
+
+Every unit in the stack therefore resolves the same names and the same tag map, without the
+operator repeating the values per unit.
+
+## Quick Start
+
+### Requirements
+
+- Terraform or OpenTofu `>= 0.12`
+- No provider configuration and no credentials — the module only computes values
+
+### Use it in a module
+
+1. Add the module block, pointing at a released tag:
+
+   ```hcl
+   module "tags" {
+     source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+     env = {
+       organization_name = "acme"
+       org_unit_name     = "devops"
+       environment_name  = "prod"
+       environment_type  = "production"
+     }
+   }
+   ```
+
+2. Initialize and inspect the computed values:
+
+   ```sh
+   terraform init
+   terraform console
+   > module.tags.locals.environment_name
+   > module.tags.locals.common_tags
+   ```
+
+3. Apply the tags to your resources with `merge(module.tags.locals.common_tags, var.extra_tags)`.
+
+### Work on this module
+
+All commands run from the repository root:
+
+```sh
+make fmt     # format the terraform/opentofu code
+make lint    # validate and lint
+make readme  # regenerate README.md from README.yaml
+```
+
+
+## Examples
+
+### Fully populated environment
+
+```hcl
+module "tags" {
+  source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+  env = {
+    organization_name = "Acme"
+    org_unit_name     = "DevOps"
+    environment_name  = "Prod"
+    environment_type  = "Production"
+  }
+}
+```
+
+Resolves to:
+
+| Output                             | Value                            |
+|------------------------------------|----------------------------------|
+| `locals.name_tag`                  | `Acme DevOps Prod Production`    |
+| `locals.name_tag_lc`               | `acme devops prod production`    |
+| `locals.object_name_tag`           | `acmedevopsprodproduction`       |
+| `locals.object_name_tag_20`        | `acmedevopsprodprodu`            |
+| `locals.organization_name`         | `Acme-DevOps`                    |
+| `locals.environment_name`          | `Acme-DevOps-Prod-Production`    |
+| `locals.environment_name_lc`       | `acme-devops-prod-production`    |
+| `locals.common_tags_string_lc`     | see below                        |
+
+Tag renderings iterate the map in lexicographic key order:
+
+```
+application-name=prod,application-type=production,organization=acme,organization-full-name=acme-devops-prod-production,organization-unit=devops
+```
+
+and `locals.common_tags_json` for the same input:
+
+```json
+{"application-name": "Prod","application-type": "Production","organization": "Acme","organization-full-name": "Acme-DevOps-Prod-Production","organization-unit": "DevOps"}
+```
+
+### Partially populated environment
+
+Unset keys are dropped from the joined names and become `NIL` in `common_tags`:
+
+```hcl
+module "tags" {
+  source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+  env = {
+    organization_name = "Acme"
+    environment_name  = "Dev"
+  }
+}
+```
+
+| Output                       | Value                                        |
+|------------------------------|----------------------------------------------|
+| `locals.name_tag`            | `Acme Dev`                                   |
+| `locals.object_name_tag`     | `acmedev`                                    |
+| `locals.organization_name`   | `Acme`                                       |
+| `locals.environment_name`    | `Acme-Dev`                                   |
+| `locals.common_tags`         | `organization-unit` and `application-type` are `NIL` |
+| `locals.common_tags_k8s`     | `organization-unit` and `application-type` are omitted |
+
+### Tagging AWS resources
+
+```hcl
+resource "aws_s3_bucket" "this" {
+  bucket = module.tags.locals.object_name_tag_32
+  tags   = merge(module.tags.locals.common_tags, var.extra_tags)
+}
+```
+
+### Labelling Kubernetes objects
+
+```hcl
+resource "kubernetes_namespace" "this" {
+  metadata {
+    name   = module.tags.locals.object_name_tag_20
+    labels = module.tags.locals.common_tags_k8s
+  }
+}
+```
+
+### Passing tags to a component that only accepts a string
+
+```hcl
+resource "helm_release" "this" {
+  name = module.tags.locals.object_name_tag_32
+
+  set {
+    name  = "commonLabels"
+    value = module.tags.locals.common_tags_json
+  }
+}
+```
 
 
 
@@ -60,22 +366,41 @@ Available targets:
   help                                Help screen
   help/all                            Display help for all targets
   help/short                          This help short screen
-  lint:                              Lint terraform code
+  init/%                              Initialize the project for a specific cloud provider: %S
+  lint                                Lint terraform/opentofu code
+  tag                                 Tag the current version
 
 ```
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| env | Environment definition object | any | `<map>` | no |
+|------|-------------|------|---------|:--------:|
+| <a name="input_env"></a> [env](#input\_env) | Environment definition object. (Optional) Default: {}. Supported keys: organization\_name, org\_unit\_name, environment\_name, environment\_type — all optional strings defaulting to empty, and empty values are omitted from the generated names. | `any` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| env | Environment variables with default |
-| locals | All local scoped varialbes set |
-
+| <a name="output_env"></a> [env](#output\_env) | Environment definition as effectively resolved by this module, with every unset key defaulted to an empty string. |
+| <a name="output_locals"></a> [locals](#output\_locals) | All local scoped variables computed by this module: naming strings in several length/case variants plus the common tag map in map, JSON, key=value and Kubernetes-safe renderings. |
 
 
 
@@ -85,31 +410,28 @@ Available targets:
 
 File a GitHub [issue](https://github.com/cloudopsworks/terraform-local-tags/issues), send us an [email][email] or join our [Slack Community][slack].
 
-[![README Commercial Support][readme_commercial_support_img]][readme_commercial_support_link]
 
 ## DevOps Tools
+[Our Products](https://cloudopsworks.co/products/)
+[CI/CD Blueprint](https://cloudopsworks.co/cicd-blueprint/)
+[Open Source](https://cloudopsworks.co/open-source/)
 
 ## Slack Community
 
 
 ## Newsletter
-
-## Office Hours
-
-## Contributing
+[Resources Directory](https://cloudopsworks.co/resources/)
 
 ### Bug Reports & Feature Requests
 
 Please use the [issue tracker](https://github.com/cloudopsworks/terraform-local-tags/issues) to report any bugs or file feature requests.
-
-### Developing
 
 
 
 
 ## Copyrights
 
-Copyright © 2021-2022 [Cloud Ops Works LLC](https://cloudops.works)
+Copyright © 2021-2026 [Cloud Ops Works LLC](https://cloudopsworks.co)
 
 
 
@@ -161,37 +483,36 @@ This project is maintained by [Cloud Ops Works LLC][website].
 |---|
 
   [berahac_homepage]: https://github.com/berahac
-  [berahac_avatar]: https://img.cloudops.works/150x150/https://github.com/berahac.png
+  [berahac_avatar]: https://github.com/berahac.png?size=50
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
 
-  [logo]: https://cloudops.works/logo-300x69.svg
-  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=docs
-  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=website
-  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=github
-  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=jobs
-  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=hire
-  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=slack
-  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=linkedin
-  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=twitter
-  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=testimonial
-  [office_hours]: https://cloudops.works/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=office_hours
-  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=newsletter
-  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=email
-  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=commercial_support
-  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=we_love_open_source
-  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=terraform_modules
-  [readme_header_img]: https://cloudops.works/readme/header/img
-  [readme_header_link]: https://cloudops.works/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_header_link
-  [readme_footer_img]: https://cloudops.works/readme/footer/img
-  [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_footer_link
-  [readme_commercial_support_img]: https://cloudops.works/readme/commercial-support/img
-  [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=Terraform+Local+Tags&url=https://github.com/cloudopsworks/terraform-local-tags
+  [logo]: https://cloudopsworks.co/images/main-logo.png
+  [docs]: https://cloudopsworks.co/resources?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=docs
+  [website]: https://cloudopsworks.co?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=website
+  [github]: https://cloudopsworks.co/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=github
+  [jobs]: https://cloudopsworks.co/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=jobs
+  [hire]: https://cloudopsworks.co/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=hire
+  [slack]: https://cloudopsworks.co/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=slack
+  [linkedin]: https://cloudopsworks.co/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=linkedin
+  [x]: https://cloudopsworks.co/x?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=x
+  [testimonial]: https://cloudopsworks.co/case-studies?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=testimonial
+  [office_hours]: https://cloudopsworks.co/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=office_hours
+  [newsletter]: https://cloudopsworks.co/resources?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=newsletter
+  [email]: https://cloudopsworks.co/contact?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=email
+  [commercial_support]: https://cloudopsworks.co/services?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=commercial_support
+  [we_love_open_source]: https://cloudopsworks.co/open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=we_love_open_source
+  [terraform_modules]: https://cloudopsworks.co/open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=terraform_modules
+  [readme_header_img]: https://cloudopsworks.co/images/readme-header.png
+  [readme_header_link]: https://cloudopsworks.co/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_header_link
+  [readme_footer_img]: https://cloudopsworks.co/images/main-logo-footer.png
+  [readme_footer_link]: https://cloudopsworks.co/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_footer_link
+  [readme_commercial_support_img]: https://cloudopsworks.co/readme/commercial-support/img
+  [readme_commercial_support_link]: https://cloudopsworks.co/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-local-tags&utm_content=readme_commercial_support_link
+  [share_twitter]: https://x.com/intent/tweet/?text=Terraform+Local+Tags&url=https://github.com/cloudopsworks/terraform-local-tags
   [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Local+Tags&url=https://github.com/cloudopsworks/terraform-local-tags
   [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/terraform-local-tags
   [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/terraform-local-tags
-  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/terraform-local-tags
   [share_email]: mailto:?subject=Terraform+Local+Tags&body=https://github.com/cloudopsworks/terraform-local-tags
-  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
+  [beacon]: https://ga-beacon.cloudopsworks.co/G-QMZVYYN2VN/cloudopsworks/terraform-local-tags?pixel&cs=github&cm=readme&an=terraform-local-tags
