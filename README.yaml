@@ -3,11 +3,11 @@ name: Terraform Local Tags
 #logo: logo/logo.jpg
 badges:
   - name: Latest Release
-    image: https://img.shields.io/github/release/<owner/repo>.svg?style=for-the-badge
-    url: https://github.com/<owner/repo>/releases/latest
+    image: https://img.shields.io/github/release/cloudopsworks/terraform-local-tags.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-local-tags/releases/latest
   - name: Last Updated
-    image: https://img.shields.io/github/last-commit/<owner/repo>.svg?style=for-the-badge
-    url: https://github.com/<owner/repo>/commits
+    image: https://img.shields.io/github/last-commit/cloudopsworks/terraform-local-tags.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-local-tags/commits
 
 license: "APACHE2"
 
@@ -22,18 +22,315 @@ github_repo: cloudopsworks/terraform-local-tags
 description: |-
   Terraform Local tags building block for reuse on multiple projects.
 
+  Takes a single loosely typed `env` object describing the organization and the environment,
+  and derives from it a consistent set of naming strings and resource tags. It creates no
+  resources, requires no provider and declares no backend — it is a pure computation module
+  meant to be embedded in every other Cloud Ops Works Terraform module so that names and tags
+  stay identical across clouds, accounts and stacks.
+
 # Introduction to the project
 introduction: |-
-#  This is an introduction.
+  Resource naming and tagging drift is the most common source of inconsistency across an
+  infrastructure estate: one module lowercases, another does not; one truncates at 20
+  characters for an ELB name, another at 32 for an S3 bucket; one emits `Environment`, another
+  emits `application-name`. This module removes that decision from every consuming module by
+  computing all of the variants once, from one input.
+
+  ### Input
+
+  A single `env` object with four optional keys:
+
+  | Key                 | Description                          | Default |
+  |---------------------|--------------------------------------|---------|
+  | `organization_name` | Organization name                    | `""`    |
+  | `org_unit_name`     | Organizational unit name             | `""`    |
+  | `environment_name`  | Application / environment name       | `""`    |
+  | `environment_type`  | Environment type                     | `""`    |
+
+  Keys left unset resolve to an empty string and are dropped from every generated name, so
+  partial configurations degrade cleanly instead of producing dangling separators.
+
+  ### Naming outputs
+
+  All naming values are exposed under the `locals` output.
+
+  | Output key             | Composition                                                             | Case      |
+  |------------------------|-------------------------------------------------------------------------|-----------|
+  | `name_tag`             | organization, unit, environment name and type joined by spaces          | as given  |
+  | `name_tag_lc`          | same as `name_tag`                                                       | lowercase |
+  | `object_name_tag`      | same parts concatenated with no separator                                | lowercase |
+  | `object_name_tag_20`   | `object_name_tag` truncated to 20 characters                             | lowercase |
+  | `object_name_tag_32`   | `object_name_tag` truncated to 32 characters                             | lowercase |
+  | `organization_name`    | organization and unit joined by `-`                                      | as given  |
+  | `organization_name_lc` | same as `organization_name`                                              | lowercase |
+  | `organization_name_20` | `organization_name` truncated to 20 characters                           | lowercase |
+  | `organization_name_32` | `organization_name` truncated to 32 characters                           | lowercase |
+  | `environment_name`     | organization, unit, environment name and type joined by `-`              | as given  |
+  | `environment_name_lc`  | same as `environment_name`                                               | lowercase |
+  | `environment_name_20`  | `environment_name` truncated to 20 characters                            | lowercase |
+  | `environment_name_32`  | `environment_name` truncated to 32 characters                            | lowercase |
+
+  The truncated variants exist for providers that enforce short identifiers — AWS load
+  balancer names, storage account names, Kubernetes labels — so the consuming module never has
+  to re-implement the `substr` logic.
+
+  ### Tag outputs
+
+  | Output key              | Type     | Description                                                                            |
+  |-------------------------|----------|----------------------------------------------------------------------------------------|
+  | `common_tags`           | `map`    | Canonical tag map. Keys with no value are emitted as the literal `NIL`.                  |
+  | `common_tags_k8s`       | `map`    | `common_tags` with spaces replaced by `-` and `NIL` entries removed — safe as label values. |
+  | `common_tags_json`      | `string` | `common_tags_k8s` rendered as a JSON object string.                                      |
+  | `common_tags_string`    | `string` | `common_tags_k8s` rendered as comma separated `key=value` pairs.                          |
+  | `common_tags_string_lc` | `string` | `common_tags_string`, lowercased.                                                        |
+
+  The tag keys produced in `common_tags` are `organization-full-name`, `organization`,
+  `organization-unit`, `application-name` and `application-type`.
+
+  The `common_tags` map keeps `NIL` placeholders so that a tag key is never silently missing on
+  a cloud resource, while `common_tags_k8s` drops them because Kubernetes label values must be
+  meaningful. The `_json` and `_string` renderings exist for the many places that accept tags
+  only as an opaque string — Helm values, Kubernetes annotations, provider arguments typed as
+  `string`, or CI variables.
+
+  ### Second output: `env`
+
+  The `env` output echoes the four input keys after default resolution. It lets a consuming
+  module read the effective configuration without re-implementing the `lookup` and default
+  chain.
 
 # How to use this project
 usage: |-
+  This module produces no resources and has no provider requirements, so it is consumed as a
+  nested module rather than deployed on its own. Add it to the module that needs the names and
+  tags, then read the values from its `locals` output.
+
+  ### Add the module as a git submodule
+
+  Cloud Ops Works modules track their building blocks as git submodules pinned to a released
+  tag:
+
+  ```sh
+  git submodule add https://github.com/cloudopsworks/terraform-local-tags.git modules/tags
+  cd modules/tags && git checkout v1.0 && cd -
+  git add .gitmodules modules/tags
+  ```
+
+  Then reference it by local path:
+
+  ```hcl
+  module "tags" {
+    source = "./modules/tags"
+
+    env = {
+      organization_name = var.org.organization_name
+      org_unit_name     = var.org.organization_unit
+      environment_name  = var.org.environment_name
+      environment_type  = var.org.environment_type
+    }
+  }
+  ```
+
+  ### Or reference the repository directly
+
+  ```hcl
+  module "tags" {
+    source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+    env = {
+      organization_name = var.org.organization_name
+      org_unit_name     = var.org.organization_unit
+      environment_name  = var.org.environment_name
+      environment_type  = var.org.environment_type
+    }
+  }
+  ```
+
+  The `v1.0` ref is a moving major.minor tag maintained by the release pipeline; pin to a full
+  `vX.Y.Z` tag when you need a fully reproducible checkout.
+
+  ### Consume the outputs
+
+  ```hcl
+  locals {
+    all_tags    = merge(module.tags.locals.common_tags, var.extra_tags)
+    system_name = module.tags.locals.environment_name
+    bucket_name = module.tags.locals.object_name_tag_32
+  }
+  ```
+
+  ### Terragrunt-driven root modules
+
+  The module is never scaffolded into a Terragrunt unit directly. In a Cloud Ops Works stack the
+  operator supplies the organization block once in `env-inputs.yaml`, Terragrunt maps it to the
+  root module `org` variable, and the root module forwards it to `module.tags`:
+
+  ```yaml
+  # env-inputs.yaml — supplied once per environment, inherited by every unit
+  org:
+    organization_name: "acme"      # (Required) Organization name
+    organization_unit: "devops"    # (Required) Organizational unit name
+    environment_name: "prod"       # (Required) Application / environment name
+    environment_type: "production" # (Required) Environment type
+  ```
+
+  ```hcl
+  # terragrunt.hcl — generated by terragrunt scaffold for the consuming module
+  locals {
+    env_vars = yamldecode(file(find_in_parent_folders("env-inputs.yaml")))
+  }
+
+  inputs = {
+    org = local.env_vars.org
+  }
+  ```
+
+  Every unit in the stack therefore resolves the same names and the same tag map, without the
+  operator repeating the values per unit.
 
 # Example usage
 examples: |-
+  ### Fully populated environment
+
+  ```hcl
+  module "tags" {
+    source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+    env = {
+      organization_name = "Acme"
+      org_unit_name     = "DevOps"
+      environment_name  = "Prod"
+      environment_type  = "Production"
+    }
+  }
+  ```
+
+  Resolves to:
+
+  | Output                             | Value                            |
+  |------------------------------------|----------------------------------|
+  | `locals.name_tag`                  | `Acme DevOps Prod Production`    |
+  | `locals.name_tag_lc`               | `acme devops prod production`    |
+  | `locals.object_name_tag`           | `acmedevopsprodproduction`       |
+  | `locals.object_name_tag_20`        | `acmedevopsprodprodu`            |
+  | `locals.organization_name`         | `Acme-DevOps`                    |
+  | `locals.environment_name`          | `Acme-DevOps-Prod-Production`    |
+  | `locals.environment_name_lc`       | `acme-devops-prod-production`    |
+  | `locals.common_tags_string_lc`     | see below                        |
+
+  Tag renderings iterate the map in lexicographic key order:
+
+  ```
+  application-name=prod,application-type=production,organization=acme,organization-full-name=acme-devops-prod-production,organization-unit=devops
+  ```
+
+  and `locals.common_tags_json` for the same input:
+
+  ```json
+  {"application-name": "Prod","application-type": "Production","organization": "Acme","organization-full-name": "Acme-DevOps-Prod-Production","organization-unit": "DevOps"}
+  ```
+
+  ### Partially populated environment
+
+  Unset keys are dropped from the joined names and become `NIL` in `common_tags`:
+
+  ```hcl
+  module "tags" {
+    source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+    env = {
+      organization_name = "Acme"
+      environment_name  = "Dev"
+    }
+  }
+  ```
+
+  | Output                       | Value                                        |
+  |------------------------------|----------------------------------------------|
+  | `locals.name_tag`            | `Acme Dev`                                   |
+  | `locals.object_name_tag`     | `acmedev`                                    |
+  | `locals.organization_name`   | `Acme`                                       |
+  | `locals.environment_name`    | `Acme-Dev`                                   |
+  | `locals.common_tags`         | `organization-unit` and `application-type` are `NIL` |
+  | `locals.common_tags_k8s`     | `organization-unit` and `application-type` are omitted |
+
+  ### Tagging AWS resources
+
+  ```hcl
+  resource "aws_s3_bucket" "this" {
+    bucket = module.tags.locals.object_name_tag_32
+    tags   = merge(module.tags.locals.common_tags, var.extra_tags)
+  }
+  ```
+
+  ### Labelling Kubernetes objects
+
+  ```hcl
+  resource "kubernetes_namespace" "this" {
+    metadata {
+      name   = module.tags.locals.object_name_tag_20
+      labels = module.tags.locals.common_tags_k8s
+    }
+  }
+  ```
+
+  ### Passing tags to a component that only accepts a string
+
+  ```hcl
+  resource "helm_release" "this" {
+    name = module.tags.locals.object_name_tag_32
+
+    set {
+      name  = "commonLabels"
+      value = module.tags.locals.common_tags_json
+    }
+  }
+  ```
 
 # How to get started quickly
 quickstart: |-
+  ### Requirements
+
+  - Terraform or OpenTofu `>= 0.12`
+  - No provider configuration and no credentials — the module only computes values
+
+  ### Use it in a module
+
+  1. Add the module block, pointing at a released tag:
+
+     ```hcl
+     module "tags" {
+       source = "git::https://github.com/cloudopsworks/terraform-local-tags.git?ref=v1.0"
+
+       env = {
+         organization_name = "acme"
+         org_unit_name     = "devops"
+         environment_name  = "prod"
+         environment_type  = "production"
+       }
+     }
+     ```
+
+  2. Initialize and inspect the computed values:
+
+     ```sh
+     terraform init
+     terraform console
+     > module.tags.locals.environment_name
+     > module.tags.locals.common_tags
+     ```
+
+  3. Apply the tags to your resources with `merge(module.tags.locals.common_tags, var.extra_tags)`.
+
+  ### Work on this module
+
+  All commands run from the repository root:
+
+  ```sh
+  make fmt     # format the terraform/opentofu code
+  make lint    # validate and lint
+  make readme  # regenerate README.md from README.yaml
+  ```
 
 include:
   - "docs/targets.md"
